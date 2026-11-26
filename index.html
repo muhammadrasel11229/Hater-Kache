@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>হাতের কাছে — এলাকার বিশ্বস্ত কারিগর ও সেবা</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Hind Siliguri & Noto Sans Bengali -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Hind Siliguri"', '"Noto Sans Bengali"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        accent: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(14px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.22s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- ==================== TOP NAVIGATION BAR ==================== -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-center justify-between py-2.5 sm:py-3 gap-2.5">
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchRole('customer')">
+                    <div class="w-10 h-10 rounded-xl bg-brand-700 text-white flex items-center justify-center shadow-md shadow-brand-700/20">
+                        <i data-lucide="wrench" class="w-5 h-5 text-accent-400"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <h1 class="text-xl sm:text-2xl font-bold text-brand-800 leading-none tracking-tight">হাতের কাছে</h1>
+                            <span class="text-[10px] font-bold bg-accent-500/15 text-accent-600 px-1.5 py-0.5 rounded-md border border-accent-500/30">v2.0</span>
+                        </div>
+                        <p class="text-[11px] sm:text-xs text-slate-500 font-medium mt-0.5">এলাকার বিশ্বস্ত কারিগর ও সেবা</p>
+                    </div>
+                </div>
+
+                <!-- Right Controls: Area Selector & 3 Mode Switcher -->
+                <div class="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end">
+                    <!-- Area Dropdown -->
+                    <div id="globalAreaWrapper" class="relative flex items-center bg-slate-100 hover:bg-slate-200/70 transition rounded-xl px-2.5 py-1.5 border border-slate-200">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-brand-700 mr-1 shrink-0"></i>
+                        <select id="locationFilter" onchange="handleLocationChange(this.value)" class="bg-transparent text-xs sm:text-sm font-semibold text-slate-700 focus:outline-none cursor-pointer pr-1">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <!-- 3-Mode Toggle Pill -->
+                    <div class="inline-flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                        <button id="btnRoleCustomer" onclick="switchRole('customer')" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 bg-brand-700 text-white shadow-sm">
+                            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+                            <span>সেবা নিন</span>
+                        </button>
+                        <button id="btnRoleWorker" onclick="switchRole('worker')" class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                            <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
+                            <span>কাজ করুন</span>
+                        </button>
+                        <button id="btnRoleAdmin" onclick="switchRole('admin')" class="relative px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                            <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+                            <span>অ্যাডমিন প্যানেল</span>
+                            <span id="adminPendingBadge" class="hidden bg-rose-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full leading-tight">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="flex-1">
+
+        <!-- ================================================================ -->
+        <!-- MODE 1: CUSTOMER VIEW ("সেবা নিন")                                -->
+        <!-- ================================================================ -->
+        <div id="customerView" class="block">
+            <!-- Hero Section -->
+            <section class="bg-gradient-to-br from-slate-900 via-brand-900 to-brand-800 text-white py-8 sm:py-11 px-4 relative overflow-hidden">
+                <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+                <div class="max-w-5xl mx-auto relative z-10 text-center">
+                    <span class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm text-emerald-100 text-xs sm:text-sm font-medium px-3 py-1 rounded-full mb-3 border border-white/15">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-accent-400"></i>
+                        অ্যাডমিন যাচাইকৃত ও NID ভেরিফাইড কারিগর
+                    </span>
+                    <h2 class="text-2xl sm:text-4xl font-bold leading-snug mb-2">
+                        আপনার এলাকার দক্ষ কারিগর এখন <span class="text-accent-400">হাতের নাগালে!</span>
+                    </h2>
+                    <p class="text-emerald-100/90 text-sm sm:text-base max-w-2xl mx-auto mb-6">
+                        ইলেকট্রিশিয়ান, প্লাম্বার, এসি টেকনিশিয়ান, হোম টিউটর কিংবা রাজমিস্ত্রি—সরাসরি কল করুন বা মুহূর্তেই বুকিং দিন।
+                    </p>
+
+                    <!-- Search Bar -->
+                    <div class="max-w-2xl mx-auto bg-white p-1.5 rounded-2xl shadow-xl flex items-center gap-2">
+                        <div class="flex items-center flex-1 pl-3">
+                            <i data-lucide="search" class="w-5 h-5 text-slate-400 mr-2 shrink-0"></i>
+                            <input type="text" id="searchInput" oninput="renderWorkers()" placeholder="কী সেবা প্রয়োজন? যেমন: ফ্যান মেরামত, প্লাম্বার, এসি..." class="w-full text-slate-800 placeholder-slate-400 text-sm sm:text-base focus:outline-none py-2">
+                        </div>
+                        <button onclick="renderWorkers()" class="bg-brand-700 hover:bg-brand-800 text-white font-semibold px-5 py-2.5 rounded-xl text-sm sm:text-base transition shrink-0">
+                            খুঁজুন
+                        </button>
+                    </div>
+
+                    <!-- Quick Action Bar -->
+                    <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
+                        <button onclick="openJobPostModal()" class="inline-flex items-center gap-2 bg-accent-500 hover:bg-accent-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm shadow-md transition">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            জরুরি কাজের পোস্ট দিন
+                        </button>
+                        <button onclick="openMyBookingsDrawer()" class="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm border border-white/25 backdrop-blur-sm transition">
+                            <i data-lucide="clipboard-list" class="w-4 h-4 text-accent-400"></i>
+                            আমার বুকিংসমূহ
+                            <span id="bookingCountBadge" class="bg-accent-500 text-slate-950 text-xs font-bold px-2 py-0.5 rounded-full">০</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Category Filter Chips -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">সেবার ক্যাটাগরি</h3>
+                    <span id="workerResultCount" class="text-xs sm:text-sm font-medium text-slate-500"></span>
+                </div>
+                <div id="categoryChips" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+                    <!-- Populated via JS -->
+                </div>
+            </section>
+
+            <!-- Approved Workers Grid -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div id="workersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    <!-- Worker Cards Populated via JS -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyWorkersState" class="hidden text-center py-14 bg-white rounded-2xl border border-slate-200 shadow-sm mt-4">
+                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400">
+                        <i data-lucide="user-x" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-800">এই মুহূর্তে কোনো অনুমোদিত কারিগর পাওয়া যায়নি</h4>
+                    <p class="text-sm text-slate-500 max-w-md mx-auto mt-1 mb-4">অন্য এলাকা বা ক্যাটাগরি বেছে নিন অথবা সরাসরি আপনার কাজের বিবরণ পোস্ট করুন।</p>
+                    <div class="flex justify-center gap-3">
+                        <button onclick="resetFilters()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition">সব ফিল্টার মুছুন</button>
+                        <button onclick="openJobPostModal()" class="px-4 py-2 rounded-xl bg-brand-700 hover:bg-brand-800 text-white font-semibold text-sm transition">কাজের পোস্ট দিন</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Live Customer Urgent Job Posts Feed -->
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-14">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <div>
+                            <h3 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="megaphone" class="w-5 h-5 text-accent-600"></i>
+                                এলাকার চলমান জরুরি কাজের পোস্টসমূহ
+                            </h3>
+                            <p class="text-xs text-slate-500">আপনার এলাকার গ্রাহকদের প্রকাশিত সাম্প্রতিক কাজের বিজ্ঞপ্তি</p>
+                        </div>
+                        <button onclick="openJobPostModal()" class="text-xs sm:text-sm font-bold text-brand-700 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3.5 py-2 rounded-xl transition">
+                            + নতুন পোস্ট দিন
+                        </button>
+                    </div>
+                    <div id="customerUrgentJobsFeed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- MODE 2: WORKER VIEW ("কাজ করুন")                                  -->
+        <!-- ================================================================ -->
+        <div id="workerView" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-16">
+            <!-- Worker Top Banner -->
+            <div class="bg-gradient-to-r from-slate-900 to-brand-900 text-white rounded-2xl p-5 sm:p-7 mb-6 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-1.5 bg-accent-500/20 text-accent-400 text-xs font-semibold px-2.5 py-1 rounded-full mb-2">
+                        <i data-lucide="hard-hat" class="w-3.5 h-3.5"></i>
+                        কারিগর ও সেবাদাতা প্যানেল
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-bold">আপনার দক্ষতা দিয়ে আয় করুন নিজের এলাকায়</h2>
+                    <p class="text-slate-300 text-sm mt-1">নিচের তালিকা থেকে আপনার প্রোফাইল বেছে নিয়ে কাজের অনুরোধ দেখুন অথবা নতুন কারিগর হিসেবে আবেদন করুন।</p>
+                </div>
+                <button onclick="scrollToRegisterForm()" class="bg-accent-500 hover:bg-accent-600 text-slate-950 font-bold px-5 py-3 rounded-xl text-sm shadow-lg transition flex items-center gap-2 shrink-0">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    নতুন কারিগর নিবন্ধন
+                </button>
+            </div>
+
+            <!-- Simulated Worker Login Selector & Status Card -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center shrink-0">
+                        <i data-lucide="user-check" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex-1">
+                        <label for="activeWorkerSelector" class="block text-xs font-semibold text-slate-500 mb-1">কারিগর অ্যাকাউন্ট নির্বাচন করুন (ডেমো লগইন):</label>
+                        <select id="activeWorkerSelector" onchange="handleActiveWorkerChange(this.value)" class="w-full sm:w-80 px-3 py-2 rounded-xl border border-slate-300 text-sm font-bold text-slate-800 bg-slate-50 focus:outline-none focus:border-brand-600">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Selected Worker Status & Availability Toggle -->
+                <div id="selectedWorkerControlBox" class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 pt-3 md:pt-0 border-slate-100">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- Worker Stats Row -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-xs text-slate-500 font-medium">আপনার মোট অনুরোধ</p>
+                    <p id="statTotalRequests" class="text-2xl font-bold text-slate-800 mt-1">০</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-xs text-slate-500 font-medium">অপেক্ষমাণ (Pending)</p>
+                    <p id="statPendingRequests" class="text-2xl font-bold text-amber-600 mt-1">০</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-xs text-slate-500 font-medium">চলমান / গৃহীত</p>
+                    <p id="statAcceptedRequests" class="text-2xl font-bold text-brand-700 mt-1">০</p>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-xs text-slate-500 font-medium">সম্পন্ন কাজ</p>
+                    <p id="statCompletedRequests" class="text-2xl font-bold text-emerald-600 mt-1">০</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left Column: Incoming Requests & Open Job Posts -->
+                <div class="lg:col-span-7 space-y-6">
+                    <!-- Direct Service Requests for Selected Worker -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="bell-ring" class="w-5 h-5 text-brand-700"></i>
+                                গ্রাহকদের বুকিং অনুরোধসমূহ
+                            </h3>
+                            <span id="selectedWorkerReqLabel" class="text-xs font-semibold text-brand-700 bg-brand-50 px-2.5 py-1 rounded-lg"></span>
+                        </div>
+                        <div id="workerRequestsList" class="space-y-3">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Open Custom Jobs Posted by Customers -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="megaphone" class="w-5 h-5 text-accent-600"></i>
+                                এলাকার খোলা কাজের বিজ্ঞপ্তি (আবেদন করুন)
+                            </h3>
+                        </div>
+                        <div id="openJobsList" class="space-y-3">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Register New Worker Form -->
+                <div id="registerWorkerSection" class="lg:col-span-5">
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 sticky top-24">
+                        <div class="flex items-center gap-2.5 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center">
+                                <i data-lucide="user-plus" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">নতুন কারিগর নিবন্ধন</h3>
+                                <p class="text-xs text-slate-500">আবেদনের পর অ্যাডমিন যাচাই করে অনুমোদন দেবেন</p>
+                            </div>
+                        </div>
+
+                        <form id="registerWorkerForm" onsubmit="handleWorkerRegister(event)" class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">আপনার পূর্ণ নাম *</label>
+                                <input type="text" id="regName" required placeholder="যেমন: মোঃ রফিকুল ইসলাম" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">কাজের ধরন (ক্যাটাগরি) *</label>
+                                    <select id="regCategory" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-brand-600">
+                                        <!-- Populated dynamically -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">আপনার এলাকা *</label>
+                                    <select id="regArea" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-brand-600">
+                                        <!-- Populated dynamically -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">মোবাইল নম্বর *</label>
+                                    <input type="tel" id="regPhone" required placeholder="017XXXXXXXX" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">জাতীয় পরিচয়পত্র (NID নম্বর) *</label>
+                                    <input type="text" id="regNid" required placeholder="১০ বা ১৭ ডিজিটের NID" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">ভিজিট ফি / ঘণ্টা (৳) *</label>
+                                    <input type="number" id="regFee" required min="50" max="15000" placeholder="যেমন: ৩০০" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">অভিজ্ঞতা (বছর) *</label>
+                                    <input type="number" id="regExp" required min="1" max="45" placeholder="যেমন: ৫" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">নিজের কাজের সংক্ষিপ্ত বিবরণ *</label>
+                                <textarea id="regBio" rows="2" required placeholder="আপনি কী কী কাজ ভালো পারেন তা সংক্ষেপে লিখুন..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full bg-brand-700 hover:bg-brand-800 text-white font-bold py-3 rounded-xl text-sm shadow-md transition flex items-center justify-center gap-2">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                নিবন্ধনের আবেদন জমা দিন
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- MODE 3: ADMIN PANEL ("অ্যাডমিন প্যানেল")                           -->
+        <!-- ================================================================ -->
+        <div id="adminView" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-16">
+
+            <!-- Strict Admin Password Lock Screen (No Hints, Masked Input, 3-Attempt Lockout) -->
+            <div id="adminLockScreen" class="max-w-md mx-auto my-8 bg-white rounded-2xl border border-slate-200 shadow-lg p-6 sm:p-8 text-center animate-slide-up">
+                <div class="w-14 h-14 rounded-2xl bg-slate-900 text-accent-400 flex items-center justify-center mx-auto mb-4 shadow-md">
+                    <i data-lucide="shield-alert" class="w-7 h-7"></i>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900">সংরক্ষিত অ্যাডমিন প্যানেল</h2>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">শুধুমাত্র অনুমোদিত অ্যাডমিন গোপন পাসওয়ার্ড দিয়ে প্রবেশ করতে পারবেন।</p>
+
+                <!-- Lockout / Security Warning Box -->
+                <div id="adminSecurityAlert" class="hidden mt-4 bg-rose-50 border border-rose-200 rounded-xl p-3 text-xs text-rose-800 font-semibold">
+                    <!-- Dynamic security message -->
+                </div>
+
+                <form onsubmit="handleAdminPinSubmit(event)" class="mt-5 space-y-3.5 text-left" autocomplete="off">
+                    <div>
+                        <label for="adminPinInput" class="block text-xs font-bold text-slate-700 mb-1.5">অ্যাডমিন গোপন পাসওয়ার্ড *</label>
+                        <div class="relative">
+                            <input type="password" id="adminPinInput" required autocomplete="new-password" placeholder="••••••••" class="w-full tracking-widest text-base font-bold pl-4 pr-11 py-3 rounded-xl border border-slate-300 focus:outline-none focus:border-brand-600">
+                            <button type="button" onclick="toggleAdminPasswordVisibility()" title="পাসওয়ার্ড দেখুন/লুকান" class="absolute inset-y-0 right-0 px-3.5 flex items-center text-slate-400 hover:text-slate-700 transition">
+                                <i id="adminEyeIcon" data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" id="adminUnlockBtn" class="w-full bg-slate-900 hover:bg-slate-800 disabled:bg-slate-400 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl text-sm transition flex items-center justify-center gap-2 shadow-sm">
+                        <i data-lucide="unlock" class="w-4 h-4 text-accent-400"></i>
+                        <span>যাচাই করে প্রবেশ করুন</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Unlocked Admin Dashboard Content -->
+            <div id="adminDashboardContent" class="hidden space-y-6 animate-slide-up">
+                <!-- Admin Top Header -->
+                <div class="bg-slate-900 text-white rounded-2xl p-5 sm:p-6 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-2.5 py-1 rounded-full mb-1.5">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            সুপার অ্যাডমিন কন্ট্রোল সেন্টার
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold">হাতের কাছে — অ্যাডমিন ড্যাশবোর্ড</h2>
+                        <p class="text-slate-400 text-xs sm:text-sm mt-0.5">কারিগর অনুমোদন, NID যাচাই, বুকিং নিয়ন্ত্রণ এবং এলাকা ও ক্যাটাগরি ব্যবস্থাপনা।</p>
+                    </div>
+                    <button onclick="lockAdminPanel()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold px-4 py-2.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-2 shrink-0">
+                        <i data-lucide="lock" class="w-4 h-4 text-accent-400"></i>
+                        লক করুন
+                    </button>
+                </div>
+
+                <!-- 4 Overview KPI Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- KPI 1: Workers -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-500">মোট নিবন্ধিত কারিগর</span>
+                            <div class="w-9 h-9 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center">
+                                <i data-lucide="users" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <p id="kpiTotalWorkers" class="text-2xl font-bold text-slate-900 mt-2">০ জন</p>
+                        <p id="kpiPendingWorkers" class="text-xs font-semibold text-amber-600 mt-1">অনুমোদনের অপেক্ষায়: ০ জন</p>
+                    </div>
+
+                    <!-- KPI 2: Bookings -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-500">মোট বুকিং ও সম্পন্ন কাজ</span>
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+                                <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <p id="kpiTotalBookings" class="text-2xl font-bold text-slate-900 mt-2">০ টি</p>
+                        <p id="kpiCompletedBookings" class="text-xs font-semibold text-emerald-600 mt-1">সম্পন্ন হয়েছে: ০ টি</p>
+                    </div>
+
+                    <!-- KPI 3: Financial Volume & 10% Commission -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-500">আনুমানিক লেনদেন ও কমিশন</span>
+                            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                                <i data-lucide="banknote" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <p id="kpiTotalVolume" class="text-2xl font-bold text-slate-900 mt-2">৳ ০</p>
+                        <p id="kpiCommission" class="text-xs font-semibold text-brand-700 mt-1">প্ল্যাটফর্ম কমিশন (১০%): ৳ ০</p>
+                    </div>
+
+                    <!-- KPI 4: Urgent Jobs -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-slate-500">জরুরি কাজের পোস্ট</span>
+                            <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                                <i data-lucide="megaphone" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+                        <p id="kpiUrgentJobs" class="text-2xl font-bold text-slate-900 mt-2">০ টি</p>
+                        <p class="text-xs text-slate-500 mt-1">গ্রাহকদের সক্রিয় বিজ্ঞপ্তি</p>
+                    </div>
+                </div>
+
+                <!-- Admin Navigation Sub-Tabs -->
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar border-b border-slate-200 pb-2">
+                    <button id="adminTabBtnWorkers" onclick="switchAdminTab('workers')" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-2 bg-slate-900 text-white shadow-xs">
+                        <i data-lucide="user-check" class="w-4 h-4 text-accent-400"></i>
+                        <span>কারিগর ব্যবস্থাপনা ও ভেরিফিকেশন</span>
+                        <span id="tabPendingPill" class="bg-rose-600 text-white text-[11px] px-2 py-0.5 rounded-full">০</span>
+                    </button>
+                    <button id="adminTabBtnBookings" onclick="switchAdminTab('bookings')" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">
+                        <i data-lucide="list-checks" class="w-4 h-4 text-brand-700"></i>
+                        <span>সকল বুকিং মনিটরিং</span>
+                    </button>
+                    <button id="adminTabBtnPosts" onclick="switchAdminTab('posts')" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">
+                        <i data-lucide="sliders" class="w-4 h-4 text-brand-700"></i>
+                        <span>জরুরি পোস্ট ও এলাকা/ক্যাটাগরি</span>
+                    </button>
+                    <button id="adminTabBtnSystem" onclick="switchAdminTab('system')" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">
+                        <i data-lucide="database" class="w-4 h-4 text-brand-700"></i>
+                        <span>সিস্টেম ও রিসেট</span>
+                    </button>
+                </div>
+
+                <!-- ==================== ADMIN TAB A: WORKER MANAGEMENT ==================== -->
+                <div id="adminTabWorkers" class="space-y-4">
+                    <!-- Status Filter Pills -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button onclick="setAdminWorkerFilter('all')" id="awf-all" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-brand-700 text-white transition">সবাই</button>
+                            <button onclick="setAdminWorkerFilter('pending')" id="awf-pending" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">অনুমোদনের অপেক্ষায়</button>
+                            <button onclick="setAdminWorkerFilter('approved')" id="awf-approved" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">অনুমোদিত</button>
+                            <button onclick="setAdminWorkerFilter('suspended')" id="awf-suspended" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">স্থগিত / ব্লকড</button>
+                        </div>
+                        <span id="adminWorkerFilterCount" class="text-xs font-semibold text-slate-500"></span>
+                    </div>
+
+                    <!-- Workers Admin List -->
+                    <div id="adminWorkersList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- ==================== ADMIN TAB B: ALL BOOKINGS MONITOR ==================== -->
+                <div id="adminTabBookings" class="hidden space-y-4">
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">সকল বুকিং তালিকা ও স্ট্যাটাস নিয়ন্ত্রণ</h3>
+                                <p class="text-xs text-slate-500">গ্রাহক ও কারিগরের মধ্যকার সব বুকিং এখান থেকে তদারকি করুন।</p>
+                            </div>
+                        </div>
+                        <div id="adminBookingsList" class="space-y-3">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== ADMIN TAB C: URGENT POSTS & AREAS/CATEGORIES ==================== -->
+                <div id="adminTabPosts" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Left: Urgent Job Posts Moderation -->
+                    <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                        <h3 class="text-lg font-bold text-slate-800 mb-1 flex items-center gap-2">
+                            <i data-lucide="megaphone" class="w-5 h-5 text-accent-600"></i>
+                            গ্রাহকদের জরুরি কাজের পোস্ট নিয়ন্ত্রণ
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-4">অপ্রয়োজনীয় বা সম্পন্ন হওয়া পোস্ট বন্ধ বা মুছে ফেলুন।</p>
+                        <div id="adminUrgentJobsList" class="space-y-3">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Right: Add Custom Area & Category -->
+                    <div class="lg:col-span-5 space-y-5">
+                        <!-- Add New Area -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                            <h4 class="text-base font-bold text-slate-800 mb-1 flex items-center gap-2">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-brand-700"></i>
+                                নতুন এলাকা যোগ করুন
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-3">নতুন এলাকা যোগ করলে গ্রাহক ও কারিগররা তা নির্বাচন করতে পারবেন।</p>
+                            <form onsubmit="handleAddArea(event)" class="flex gap-2">
+                                <input type="text" id="newAreaInput" required placeholder="যেমন: গাজীপুর / টঙ্গী / জিরাবো" class="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                                <button type="submit" class="bg-brand-700 hover:bg-brand-800 text-white font-bold px-4 py-2 rounded-xl text-sm transition shrink-0">যোগ করুন</button>
+                            </form>
+                            <div id="adminAreasTags" class="flex flex-wrap gap-1.5 mt-3">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Add New Service Category -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                            <h4 class="text-base font-bold text-slate-800 mb-1 flex items-center gap-2">
+                                <i data-lucide="layers" class="w-4 h-4 text-brand-700"></i>
+                                নতুন সেবার ক্যাটাগরি যোগ করুন
+                            </h4>
+                            <p class="text-xs text-slate-500 mb-3">প্ল্যাটফর্মে নতুন ধরনের পেশা বা সেবা যুক্ত করুন।</p>
+                            <form onsubmit="handleAddCategory(event)" class="flex gap-2">
+                                <input type="text" id="newCategoryInput" required placeholder="যেমন: কাঠমিস্ত্রি / ড্রাইভার" class="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                                <button type="submit" class="bg-brand-700 hover:bg-brand-800 text-white font-bold px-4 py-2 rounded-xl text-sm transition shrink-0">যোগ করুন</button>
+                            </form>
+                            <div id="adminCategoriesTags" class="flex flex-wrap gap-1.5 mt-3">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== ADMIN TAB D: SYSTEM & RESET ==================== -->
+                <div id="adminTabSystem" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+                        <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-700 flex items-center justify-center">
+                            <i data-lucide="download" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">ডেটা ব্যাকআপ ও এক্সপোর্ট (JSON)</h3>
+                            <p class="text-xs sm:text-sm text-slate-500 mt-1">বর্তমান সকল কারিগর, বুকিং এবং জরুরি পোস্টের সম্পূর্ণ তথ্য JSON ফাইল হিসেবে ডাউনলোড বা কপি করুন।</p>
+                        </div>
+                        <div class="flex flex-wrap gap-3">
+                            <button onclick="exportSystemData()" class="bg-brand-700 hover:bg-brand-800 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition flex items-center gap-2">
+                                <i data-lucide="file-down" class="w-4 h-4"></i>
+                                JSON ব্যাকআপ ডাউনলোড করুন
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-rose-200 shadow-sm p-6 space-y-4">
+                        <div class="w-11 h-11 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                            <i data-lucide="rotate-ccw" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">ডেমো ডেটা রিসেট করুন</h3>
+                            <p class="text-xs sm:text-sm text-slate-500 mt-1">পরীক্ষামূলক পরিবর্তনের পর সব তথ্য পুনরায় প্রাথমিক অবস্থায় ফিরিয়ে আনতে নিচের বাটনে ক্লিক করুন।</p>
+                        </div>
+                        <div>
+                            <button onclick="resetDemoData()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition flex items-center gap-2">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                ডেমো ডেটা রিসেট করুন
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-slate-900 text-slate-300 py-8 px-4 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-center sm:text-left">
+                <div class="flex items-center justify-center sm:justify-start gap-2">
+                    <span class="text-lg font-bold text-white">হাতের কাছে</span>
+                    <span class="text-xs bg-brand-700 text-emerald-100 px-2 py-0.5 rounded">বাংলাদেশ</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">স্থানীয় দক্ষ কারিগর ও সাধারণ মানুষের বিশ্বস্ত সেতুবন্ধন।</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="switchRole('admin')" class="text-xs text-slate-400 hover:text-accent-400 underline transition">
+                    অ্যাডমিন প্যানেল
+                </button>
+                <span class="text-xs text-slate-600">|</span>
+                <button onclick="resetDemoData()" class="text-xs text-slate-400 hover:text-accent-400 underline transition">
+                    ডেমো ডেটা রিসেট
+                </button>
+                <span class="text-xs text-slate-600">|</span>
+                <span class="text-xs text-slate-400">জরুরি সাহায্য: ৯৯৯</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== MODAL 1: WORKER DETAILS & BOOKING ==================== -->
+    <div id="workerModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 animate-slide-up">
+            <div class="sticky top-0 bg-white z-10 px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-slate-800">কারিগরের বিস্তারিত ও বুকিং</h3>
+                <button onclick="closeWorkerModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div id="workerModalBody" class="p-5 space-y-5">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 2: POST A CUSTOM URGENT JOB ==================== -->
+    <div id="jobPostModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 animate-slide-up">
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="megaphone" class="w-5 h-5 text-accent-600"></i>
+                    <h3 class="text-lg font-bold text-slate-800">জরুরি কাজের পোস্ট দিন</h3>
+                </div>
+                <button onclick="closeJobPostModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleJobPostSubmit(event)" class="p-5 space-y-3.5">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">কাজের শিরোনাম *</label>
+                    <input type="text" id="jobTitle" required placeholder="যেমন: বাসার মেইন সুইচ ও ফ্যান ঠিক করতে হবে" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">ক্যাটাগরি *</label>
+                        <select id="jobCategory" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-brand-600">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">এলাকা *</label>
+                        <select id="jobArea" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:border-brand-600">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">আপনার নাম *</label>
+                        <input type="text" id="jobCustomerName" required placeholder="আপনার নাম" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">মোবাইল নম্বর *</label>
+                        <input type="tel" id="jobPhone" required placeholder="01XXXXXXXXX" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">বিস্তারিত বিবরণ ও সম্ভাব্য বাজেট (৳) *</label>
+                    <textarea id="jobDesc" rows="3" required placeholder="সমস্যার বিস্তারিত লিখুন এবং আনুমানিক বাজেট উল্লেখ করুন..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600"></textarea>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeJobPostModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-semibold text-sm">বাতিল</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-700 hover:bg-brand-800 text-white font-bold text-sm shadow">পোস্ট প্রকাশ করুন</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== DRAWER: MY BOOKINGS ("আমার বুকিংসমূহ") ==================== -->
+    <div id="myBookingsDrawer" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex justify-end">
+        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col animate-slide-up">
+            <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-brand-50">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="clipboard-list" class="w-5 h-5 text-brand-700"></i>
+                    <h3 class="text-lg font-bold text-slate-800">আমার বুকিংসমূহ</h3>
+                </div>
+                <button onclick="closeMyBookingsDrawer()" class="p-1.5 rounded-lg text-slate-500 hover:bg-white transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div id="myBookingsList" class="flex-1 overflow-y-auto p-4 space-y-3">
+                <!-- Populated via JS -->
+            </div>
+
+            <div class="p-4 border-t border-slate-200 bg-slate-50 text-center">
+                <p class="text-xs text-slate-500">কাজ শেষে কারিগরকে সরাসরি নগদ (Cash) বা বিকাশ/নগদে পেমেন্ট করুন।</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+
+    <!-- ==================== APPLICATION LOGIC ==================== -->
+    <script>
+        const STORAGE_KEY = 'hater_kache_v2';
+        const ADMIN_SECRET_PASS = '18082025';
+        const MAX_ADMIN_ATTEMPTS = 3;
+        const LOCKOUT_SECONDS = 30;
+
+        // Default Areas & Categories
+        const INITIAL_AREAS = ['বাইপাইল', 'সাভার', 'আশুলিয়া', 'মিরপুর', 'উত্তরা', 'ধানমন্ডি'];
+        const INITIAL_CATEGORIES = [
+            { id: 'ইলেকট্রিশিয়ান', label: 'ইলেকট্রিশিয়ান', icon: 'zap' },
+            { id: 'প্লাম্বার', label: 'প্লাম্বার', icon: 'droplets' },
+            { id: 'এসি টেকনিশিয়ান', label: 'এসি টেকনিশিয়ান', icon: 'snowflake' },
+            { id: 'হোম টিউটর', label: 'হোম টিউটর', icon: 'book-open' },
+            { id: 'রাজমিস্ত্রি ও রঙমিস্ত্রি', label: 'রাজমিস্ত্রি ও রঙমিস্ত্রি', icon: 'hammer' },
+            { id: 'পরিচ্ছন্নতাকর্মী', label: 'পরিচ্ছন্নতাকর্মী', icon: 'sparkles' },
+            { id: 'ডেলিভারি ও শিফটিং', label: 'ডেলিভারি ও শিফটিং', icon: 'truck' }
+        ];
+
+        // Pre-populated Workers (6 Approved + 2 Pending Applicants for instant Admin verification testing)
+        const INITIAL_WORKERS = [
+            {
+                id: 'w1',
+                name: 'মোঃ আব্দুল করিম',
+                category: 'ইলেকট্রিশিয়ান',
+                area: 'বাইপাইল',
+                fee: 300,
+                experience: 8,
+                rating: 4.9,
+                jobsCompleted: 142,
+                nid: '1988269451023',
+                status: 'approved', // 'approved' | 'pending' | 'suspended'
+                verified: true,
+                available: true,
+                phone: '01711-234567',
+                bio: 'বাসা-বাড়ি ও অফিসের সব ধরনের ইলেকট্রিক ওয়্যারিং, ফ্যান, লাইট, আইপিএস (IPS) ও সার্কিট ব্রেকার মেরামতে ৮ বছরের অভিজ্ঞতা।',
+                reviews: [
+                    { user: 'তানভীর আহমেদ (বাইপাইল)', rating: 5, comment: 'খুব দ্রুত এসেছেন এবং নিখুঁতভাবে মেইন বোর্ডের সমস্যা ঠিক করেছেন।' },
+                    { user: 'সাবরিনা আক্তার', rating: 5, comment: 'ব্যবহার খুব ভালো, ন্যায্য বিল নিয়েছেন।' }
+                ]
+            },
+            {
+                id: 'w2',
+                name: 'মোঃ জহিরুল ইসলাম',
+                category: 'প্লাম্বার',
+                area: 'সাভার',
+                fee: 350,
+                experience: 6,
+                rating: 4.8,
+                jobsCompleted: 98,
+                nid: '1991267845120',
+                status: 'approved',
+                verified: true,
+                available: true,
+                phone: '01812-345678',
+                bio: 'পানির ট্যাংক পরিষ্কার, বেসিন, কল, গিজার ও বাথরুমের সব ধরনের পাইপ ফিটিংস এবং লিকেজ মেরামতের কাজ করা হয়।',
+                reviews: [
+                    { user: 'মাহমুদুল হাসান (সাভার)', rating: 5, comment: 'কলের লিকেজ ও পানির পাম্পের কাজ খুব যত্ন করে করেছেন।' }
+                ]
+            },
+            {
+                id: 'w3',
+                name: 'ইঞ্জি. সাইফুল আলম',
+                category: 'এসি টেকনিশিয়ান',
+                area: 'উত্তরা',
+                fee: 500,
+                experience: 7,
+                rating: 4.9,
+                jobsCompleted: 165,
+                nid: '1990261239874',
+                status: 'approved',
+                verified: true,
+                available: true,
+                phone: '01913-456789',
+                bio: 'সব ব্র্যান্ডের স্প্লিট ও উইন্ডো এসি সার্ভিসিং, গ্যাস রিফিল, কুলিং সমস্যা সমাধান এবং এসি ইনস্টলেশন বিশেষজ্ঞ।',
+                reviews: [
+                    { user: 'ডা. ফারহানা (উত্তরা)', rating: 5, comment: 'এসির মাস্টার সার্ভিসিং করিয়েছি, এখন একদম নতুনের মতো ঠান্ডা হয়।' }
+                ]
+            },
+            {
+                id: 'w4',
+                name: 'সাদিয়া আফরিন',
+                category: 'হোম টিউটর',
+                area: 'মিরপুর',
+                fee: 400,
+                experience: 4,
+                rating: 5.0,
+                jobsCompleted: 54,
+                nid: '2001268741256',
+                status: 'approved',
+                verified: true,
+                available: true,
+                phone: '01515-678901',
+                bio: 'জাহাঙ্গীরনগর বিশ্ববিদ্যালয়ের ছাত্রী। ৫ম থেকে ১০ম শ্রেণির বিজ্ঞান, গণিত ও ইংরেজি বিষয়ে যত্নসহকারে পড়ানো হয়।',
+                reviews: [
+                    { user: 'নাসরিন সুলতানা (মিরপুর)', rating: 5, comment: 'উনার পড়ানোর ধরন অসাধারণ, আমার ছেলের গণিতে রেজাল্ট অনেক ভালো হয়েছে।' }
+                ]
+            },
+            {
+                id: 'w5',
+                name: 'মোঃ মিজানুর রহমান',
+                category: 'রাজমিস্ত্রি ও রঙমিস্ত্রি',
+                area: 'আশুলিয়া',
+                fee: 600,
+                experience: 12,
+                rating: 4.7,
+                jobsCompleted: 210,
+                nid: '1985263541890',
+                status: 'approved',
+                verified: true,
+                available: true,
+                phone: '01614-567890',
+                bio: 'ঘরের প্লাস্টার, টাইলস বসানো, ছাদের ড্যাম্প মেরামত এবং আধুনিক ডিসটেম্পার ও প্লাস্টিক পেইন্টের কাজ করা হয়।',
+                reviews: []
+            },
+            {
+                id: 'w6',
+                name: 'মোঃ সোহেল রানা',
+                category: 'ডেলিভারি ও শিফটিং',
+                area: 'ধানমন্ডি',
+                fee: 450,
+                experience: 5,
+                rating: 4.6,
+                jobsCompleted: 180,
+                nid: '1993269852147',
+                status: 'approved',
+                verified: true,
+                available: false,
+                phone: '01716-789012',
+                bio: 'বাসা বদলের আসবাবপত্র পরিবহন, দোকানের মালামাল ডেলিভারি এবং জরুরি ভ্যান/পিকআপ সার্ভিস দেওয়া হয়।',
+                reviews: []
+            },
+            // 2 Pending Applicants ready for Admin Approval
+            {
+                id: 'w7',
+                name: 'মোঃ নাজমুল হাসান (নতুন আবেদন)',
+                category: 'পরিচ্ছন্নতাকর্মী',
+                area: 'বাইপাইল',
+                fee: 350,
+                experience: 3,
+                rating: 5.0,
+                jobsCompleted: 0,
+                nid: '1997264512890',
+                status: 'pending',
+                verified: false,
+                available: true,
+                phone: '01788-112233',
+                bio: 'বাসা-বাড়ি, অফিস ও পানির রিজার্ভ ট্যাংক স্বাস্থ্যসম্মতভাবে পরিষ্কার করার কাজে ৩ বছরের অভিজ্ঞতা রয়েছে।',
+                reviews: []
+            },
+            {
+                id: 'w8',
+                name: 'মোঃ শফিকুল ইসলাম (নতুন আবেদন)',
+                category: 'ইলেকট্রিশিয়ান',
+                area: 'সাভার',
+                fee: 280,
+                experience: 5,
+                rating: 5.0,
+                jobsCompleted: 0,
+                nid: '1994267812345',
+                status: 'pending',
+                verified: false,
+                available: true,
+                phone: '01899-445566',
+                bio: 'সাব-মিটার, সিলিং ফ্যান, পানির মোটর ও ইনভার্টার সংযোগের কাজ যত্নসহকারে করি।',
+                reviews: []
+            }
+        ];
+
+        const INITIAL_BOOKINGS = [
+            {
+                id: 'b101',
+                workerId: 'w1',
+                workerName: 'মোঃ আব্দুল করিম',
+                workerCategory: 'ইলেকট্রিশিয়ান',
+                workerPhone: '01711-234567',
+                customerName: 'মোঃ ফয়সাল আহমেদ',
+                customerPhone: '01722-112233',
+                area: 'বাইপাইল',
+                address: 'বাইপাইল বাসস্ট্যান্ড সংলগ্ন, রোড-৩',
+                problem: 'ড্রয়িং রুমের সিলিং ফ্যান ঘুরছে না এবং একটি সুইচ বোর্ড কাজ করছে না।',
+                preferredTime: 'আজ বিকাল ৪:০০ টা',
+                fee: 300,
+                status: 'অপেক্ষমাণ', // অপেক্ষমাণ | চলমান | সম্পন্ন | বাতিল
+                createdAt: 'আজ, ১০:৩০ AM'
+            },
+            {
+                id: 'b102',
+                workerId: 'w3',
+                workerName: 'ইঞ্জি. সাইফুল আলম',
+                workerCategory: 'এসি টেকনিশিয়ান',
+                workerPhone: '01913-456789',
+                customerName: 'তানজিনা হক',
+                customerPhone: '01755-667788',
+                area: 'উত্তরা',
+                address: 'সেক্টর-৭, রোড-১২, উত্তরা',
+                problem: '১.৫ টন স্প্লিট এসির মাস্টার সার্ভিসিং ও গ্যাস চেকআপ।',
+                preferredTime: 'গতকাল বিকাল ৫:০০ টা',
+                fee: 500,
+                status: 'সম্পন্ন',
+                createdAt: 'গতকাল'
+            }
+        ];
+
+        const INITIAL_JOB_POSTS = [
+            {
+                id: 'j201',
+                title: 'বাথরুমের বেসিনের পাইপ পরিবর্তন করতে হবে',
+                category: 'প্লাম্বার',
+                area: 'সাভার',
+                customerName: 'নাজমুল হক',
+                phone: '01833-445566',
+                desc: 'পুরনো বেসিনের নিচের পাইপ ফেটে পানি পড়ছে। আজ সন্ধ্যার মধ্যে কাজটি করাতে চাই। বাজেট: ৪০০-৫০০ টাকা।',
+                status: 'খোলা',
+                createdAt: '২ ঘণ্টা আগে'
+            },
+            {
+                id: 'j202',
+                title: 'বাসা শিফটিংয়ের জন্য পিকআপ ও ২ জন লোক প্রয়োজন',
+                category: 'ডেলিভারি ও শিফটিং',
+                area: 'বাইপাইল',
+                customerName: 'আরিফুল ইসলাম',
+                phone: '01744-998877',
+                desc: 'বাইপাইল থেকে আশুলিয়া জিরাবোতে ফার্নিচার ও মালামাল নিতে হবে।',
+                status: 'খোলা',
+                createdAt: '৪ ঘণ্টা আগে'
+            }
+        ];
+
+        // Global Application State
+        let state = {
+            role: 'customer', // 'customer' | 'worker' | 'admin'
+            selectedLocation: 'সকল এলাকা',
+            selectedCategory: 'সব ক্যাটাগরি',
+            activeWorkerId: 'w1',
+            adminUnlocked: false,
+            adminFailedAttempts: 0,
+            adminLockedUntil: 0,
+            adminTab: 'workers', // 'workers' | 'bookings' | 'posts' | 'system'
+            adminWorkerFilter: 'all', // 'all' | 'pending' | 'approved' | 'suspended'
+            areas: [],
+            categories: [],
+            workers: [],
+            bookings: [],
+            jobPosts: []
+        };
+
+        let lockoutTimerInterval = null;
+
+        // Initialize App
+        function initApp() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    state.areas = parsed.areas || [...INITIAL_AREAS];
+                    state.categories = parsed.categories || [...INITIAL_CATEGORIES];
+                    state.workers = parsed.workers || [...INITIAL_WORKERS];
+                    state.bookings = parsed.bookings || [...INITIAL_BOOKINGS];
+                    state.jobPosts = parsed.jobPosts || [...INITIAL_JOB_POSTS];
+                } else {
+                    loadDefaults();
+                }
+            } catch (e) {
+                loadDefaults();
+            }
+
+            if (!state.workers.find(w => w.id === state.activeWorkerId) && state.workers.length > 0) {
+                state.activeWorkerId = state.workers[0].id;
+            }
+
+            syncAllDropdowns();
+            renderCategoryChips();
+            renderWorkers();
+            renderCustomerUrgentFeed();
+            updateBookingBadge();
+            updateAdminBadges();
+            lucide.createIcons();
+        }
+
+        function loadDefaults() {
+            state.areas = [...INITIAL_AREAS];
+            state.categories = [...INITIAL_CATEGORIES];
+            state.workers = [...INITIAL_WORKERS];
+            state.bookings = [...INITIAL_BOOKINGS];
+            state.jobPosts = [...INITIAL_JOB_POSTS];
+            saveData();
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    areas: state.areas,
+                    categories: state.categories,
+                    workers: state.workers,
+                    bookings: state.bookings,
+                    jobPosts: state.jobPosts
+                }));
+            } catch (e) {
+                console.warn('localStorage save failed', e);
+            }
+            updateAdminBadges();
+        }
+
+        // Sync Areas & Categories across all select dropdowns
+        function syncAllDropdowns() {
+            // Top Area Filter
+            const locFilter = document.getElementById('locationFilter');
+            locFilter.innerHTML = `<option value="সকল এলাকা">সকল এলাকা</option>` +
+                state.areas.map(a => `<option value="${a}" ${state.selectedLocation === a ? 'selected' : ''}>${a}</option>`).join('');
+
+            // Registration & Job Post Area Selects
+            const areaOptions = state.areas.map(a => `<option value="${a}">${a}</option>`).join('');
+            document.getElementById('regArea').innerHTML = areaOptions;
+            document.getElementById('jobArea').innerHTML = areaOptions;
+
+            // Registration & Job Post Category Selects
+            const catOptions = state.categories.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+            document.getElementById('regCategory').innerHTML = catOptions;
+            document.getElementById('jobCategory').innerHTML = catOptions;
+        }
+
+        // Switch between Customer, Worker, and Admin Mode
+        function switchRole(role) {
+            state.role = role;
+            const customerView = document.getElementById('customerView');
+            const workerView = document.getElementById('workerView');
+            const adminView = document.getElementById('adminView');
+            const areaWrapper = document.getElementById('globalAreaWrapper');
+
+            const btnCust = document.getElementById('btnRoleCustomer');
+            const btnWork = document.getElementById('btnRoleWorker');
+            const btnAdm = document.getElementById('btnRoleAdmin');
+
+            const inactiveClass = 'px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900';
+            const activeClass = 'px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 bg-brand-700 text-white shadow-sm';
+            const adminActiveClass = 'relative px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 bg-slate-900 text-white shadow-sm';
+
+            customerView.classList.add('hidden');
+            workerView.classList.add('hidden');
+            adminView.classList.add('hidden');
+
+            btnCust.className = inactiveClass;
+            btnWork.className = inactiveClass;
+            btnAdm.className = 'relative ' + inactiveClass;
+
+            if (role === 'customer') {
+                customerView.classList.remove('hidden');
+                areaWrapper.classList.remove('hidden');
+                btnCust.className = activeClass;
+                renderCategoryChips();
+                renderWorkers();
+                renderCustomerUrgentFeed();
+            } else if (role === 'worker') {
+                workerView.classList.remove('hidden');
+                areaWrapper.classList.add('hidden');
+                btnWork.className = activeClass;
+                renderWorkerDashboard();
+            } else if (role === 'admin') {
+                adminView.classList.remove('hidden');
+                areaWrapper.classList.add('hidden');
+                btnAdm.className = adminActiveClass;
+                renderAdminView();
+            }
+
+            lucide.createIcons();
+        }
+
+        function handleLocationChange(loc) {
+            state.selectedLocation = loc;
+            renderWorkers();
+            renderCustomerUrgentFeed();
+        }
+
+        function selectCategory(catId) {
+            state.selectedCategory = catId;
+            renderCategoryChips();
+            renderWorkers();
+        }
+
+        function resetFilters() {
+            state.selectedLocation = 'সকল এলাকা';
+            state.selectedCategory = 'সব ক্যাটাগরি';
+            document.getElementById('locationFilter').value = 'সকল এলাকা';
+            document.getElementById('searchInput').value = '';
+            renderCategoryChips();
+            renderWorkers();
+            renderCustomerUrgentFeed();
+        }
+
+        // ==================== CUSTOMER MODE RENDERERS ====================
+        function renderCategoryChips() {
+            const container = document.getElementById('categoryChips');
+            const allCats = [{ id: 'সব ক্যাটাগরি', label: 'সব ক্যাটাগরি', icon: 'layout-grid' }, ...state.categories];
+
+            container.innerHTML = allCats.map(cat => {
+                const isActive = state.selectedCategory === cat.id;
+                return `
+                    <button onclick="selectCategory('${cat.id}')"
+                        class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition border ${
+                            isActive
+                            ? 'bg-brand-700 text-white border-brand-700 shadow-sm'
+                            : 'bg-white text-slate-700 border-slate-200 hover:border-brand-300 hover:bg-brand-50/50'
+                        }">
+                        <i data-lucide="${cat.icon || 'wrench'}" class="w-4 h-4 ${isActive ? 'text-accent-400' : 'text-brand-700'}"></i>
+                        <span>${cat.label}</span>
+                    </button>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function renderWorkers() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const grid = document.getElementById('workersGrid');
+            const emptyState = document.getElementById('emptyWorkersState');
+            const countLabel = document.getElementById('workerResultCount');
+
+            // Only show APPROVED workers in Customer Mode
+            const filtered = state.workers.filter(w => {
+                if (w.status !== 'approved') return false;
+                const matchLoc = state.selectedLocation === 'সকল এলাকা' || w.area === state.selectedLocation;
+                const matchCat = state.selectedCategory === 'সব ক্যাটাগরি' || w.category === state.selectedCategory;
+                const matchSearch = !query ||
+                    w.name.toLowerCase().includes(query) ||
+                    w.category.toLowerCase().includes(query) ||
+                    w.area.toLowerCase().includes(query) ||
+                    w.bio.toLowerCase().includes(query);
+                return matchLoc && matchCat && matchSearch;
+            });
+
+            countLabel.textContent = `${toBanglaNumber(filtered.length)} জন অনুমোদিত কারিগর`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                lucide.createIcons();
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filtered.map(worker => {
+                const initials = worker.name.replace('মোঃ ', '').replace('ইঞ্জি. ', '').slice(0, 2);
+                return `
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between overflow-hidden group">
+                    <div class="p-4 sm:p-5">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-700 to-emerald-600 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-xs">
+                                    ${initials}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-base leading-tight group-hover:text-brand-700 transition">${worker.name}</h4>
+                                    <span class="inline-block text-xs font-semibold text-brand-700 bg-brand-50 px-2 py-0.5 rounded-md mt-1">
+                                        ${worker.category}
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
+                                worker.available
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-amber-50 text-amber-700 border border-amber-200'
+                            }">
+                                <span class="w-1.5 h-1.5 rounded-full ${worker.available ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
+                                ${worker.available ? 'সক্রিয়' : 'ব্যস্ত'}
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 mt-3.5 text-xs text-slate-600">
+                            <span class="inline-flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-lg font-medium">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-700"></i>
+                                ${worker.area}
+                            </span>
+                            <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-800 px-2 py-1 rounded-lg font-bold">
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 text-amber-400"></i>
+                                ${toBanglaNumber(worker.rating)} (${toBanglaNumber(worker.jobsCompleted)} কাজ)
+                            </span>
+                            ${worker.verified ? `
+                            <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 px-2 py-1 rounded-lg font-semibold">
+                                <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                NID ভেরিফাইড
+                            </span>` : ''}
+                        </div>
+
+                        <p class="text-xs sm:text-sm text-slate-600 mt-3 line-clamp-2 leading-relaxed">
+                            ${worker.bio}
+                        </p>
+                    </div>
+
+                    <div class="px-4 sm:px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <div>
+                            <span class="text-[11px] text-slate-500 block">ভিজিট / শুরুর ফি</span>
+                            <span class="text-base font-bold text-slate-900">৳ ${toBanglaNumber(worker.fee)}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="tel:${worker.phone.replace(/[^0-9+]/g, '')}" title="সরাসরি কল করুন" class="p-2 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-800 transition">
+                                <i data-lucide="phone" class="w-4 h-4"></i>
+                            </a>
+                            <button onclick="openWorkerModal('${worker.id}')" class="bg-brand-700 hover:bg-brand-800 text-white font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-xl transition shadow-xs flex items-center gap-1">
+                                <span>বুকিং করুন</span>
+                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        function renderCustomerUrgentFeed() {
+            const feed = document.getElementById('customerUrgentJobsFeed');
+            const filteredJobs = state.jobPosts.filter(j =>
+                j.status !== 'বন্ধ' && (state.selectedLocation === 'সকল এলাকা' || j.area === state.selectedLocation)
+            );
+
+            if (filteredJobs.length === 0) {
+                feed.innerHTML = `<p class="text-sm text-slate-500 col-span-full py-4 text-center">এই এলাকায় বর্তমানে কোনো খোলা জরুরি কাজের পোস্ট নেই।</p>`;
+                return;
+            }
+
+            feed.innerHTML = filteredJobs.map(job => `
+                <div class="p-4 rounded-2xl border border-amber-200/80 bg-amber-50/40 flex flex-col justify-between space-y-2.5">
+                    <div>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold bg-accent-500/20 text-amber-900 px-2 py-0.5 rounded">${job.category}</span>
+                            <span class="text-[11px] text-slate-500">${job.area} • ${job.createdAt}</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm mt-2">${job.title}</h4>
+                        <p class="text-xs text-slate-600 mt-1 line-clamp-2">${job.desc}</p>
+                    </div>
+                    <div class="pt-2 border-t border-amber-200/50 flex items-center justify-between text-xs">
+                        <span class="text-slate-600">পোস্টদাতা: <strong>${job.customerName}</strong></span>
+                        <span class="text-emerald-700 font-bold">● চলমান</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Worker Details & Booking Modal
+        function openWorkerModal(workerId) {
+            const worker = state.workers.find(w => w.id === workerId);
+            if (!worker) return;
+
+            const modal = document.getElementById('workerModal');
+            const body = document.getElementById('workerModalBody');
+
+            const reviewsHtml = (worker.reviews && worker.reviews.length > 0)
+                ? worker.reviews.map(r => `
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-800">${r.user}</span>
+                            <span class="text-xs font-bold text-amber-600 flex items-center gap-0.5">
+                                <i data-lucide="star" class="w-3 h-3 fill-amber-400 text-amber-400"></i> ${toBanglaNumber(r.rating)}
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-1">${r.comment}</p>
+                    </div>
+                `).join('')
+                : `<p class="text-xs text-slate-500">এখনো কোনো রিভিউ যুক্ত হয়নি।</p>`;
+
+            body.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-brand-50/70 p-4 rounded-2xl border border-brand-100">
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h4 class="text-xl font-bold text-slate-900">${worker.name}</h4>
+                            ${worker.verified ? `
+                            <span class="inline-flex items-center gap-1 bg-emerald-600 text-white text-[11px] font-semibold px-2 py-0.5 rounded-full">
+                                <i data-lucide="badge-check" class="w-3 h-3"></i> NID ভেরিফাইড
+                            </span>` : ''}
+                        </div>
+                        <p class="text-sm font-semibold text-brand-800 mt-0.5">${worker.category} • এলাকা: ${worker.area}</p>
+                        <div class="flex flex-wrap items-center gap-3 mt-2 text-xs text-slate-600">
+                            <span>অভিজ্ঞতা: <strong>${toBanglaNumber(worker.experience)} বছর</strong></span>
+                            <span>•</span>
+                            <span>সম্পন্ন কাজ: <strong>${toBanglaNumber(worker.jobsCompleted)}টি</strong></span>
+                            <span>•</span>
+                            <span>ভিজিট ফি: <strong class="text-brand-800">৳ ${toBanglaNumber(worker.fee)}</strong></span>
+                        </div>
+                    </div>
+
+                    <a href="tel:${worker.phone.replace(/[^0-9+]/g, '')}" class="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow transition shrink-0">
+                        <i data-lucide="phone-call" class="w-4 h-4"></i>
+                        <span>কল করুন (${worker.phone})</span>
+                    </a>
+                </div>
+
+                <div class="space-y-1.5">
+                    <h5 class="text-sm font-bold text-slate-800">কাজের বিবরণ</h5>
+                    <p class="text-sm text-slate-600 leading-relaxed">${worker.bio}</p>
+                </div>
+
+                <div class="space-y-2">
+                    <h5 class="text-sm font-bold text-slate-800">গ্রাহকদের মতামত (${toBanglaNumber(worker.reviews ? worker.reviews.length : 0)})</h5>
+                    <div class="space-y-2 max-h-32 overflow-y-auto">
+                        ${reviewsHtml}
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 pt-4">
+                    <h5 class="text-base font-bold text-brand-800 mb-3 flex items-center gap-1.5">
+                        <i data-lucide="calendar-check" class="w-4 h-4"></i>
+                        বুকিং অনুরোধ পাঠান
+                    </h5>
+                    <form onsubmit="handleBookingSubmit(event, '${worker.id}')" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">আপনার নাম *</label>
+                                <input type="text" id="bookCustName" required placeholder="যেমন: রাশেদ খান" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">আপনার মোবাইল নম্বর *</label>
+                                <input type="tel" id="bookCustPhone" required placeholder="01XXXXXXXXX" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">বাসার ঠিকানা / এলাকা *</label>
+                                <input type="text" id="bookAddress" required placeholder="যেমন: বাইপাইল, রোড নং ২, বাসা ১২" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">পছন্দের সময় *</label>
+                                <input type="text" id="bookTime" required placeholder="যেমন: আজ বিকাল ৫টা" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">সমস্যার সংক্ষিপ্ত বিবরণ *</label>
+                            <textarea id="bookProblem" rows="2" required placeholder="কী কাজ করাতে চান তা লিখুন..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-brand-600"></textarea>
+                        </div>
+
+                        <div class="flex justify-end gap-2 pt-1">
+                            <button type="button" onclick="closeWorkerModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm">বন্ধ করুন</button>
+                            <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-700 hover:bg-brand-800 text-white font-bold text-sm shadow-md flex items-center gap-1.5">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                বুকিং নিশ্চিত করুন
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeWorkerModal() {
+            document.getElementById('workerModal').classList.add('hidden');
+        }
+
+        function handleBookingSubmit(e, workerId) {
+            e.preventDefault();
+            const worker = state.workers.find(w => w.id === workerId);
+            if (!worker) return;
+
+            const newBooking = {
+                id: 'b' + Date.now(),
+                workerId: worker.id,
+                workerName: worker.name,
+                workerCategory: worker.category,
+                workerPhone: worker.phone,
+                customerName: document.getElementById('bookCustName').value.trim(),
+                customerPhone: document.getElementById('bookCustPhone').value.trim(),
+                area: worker.area,
+                address: document.getElementById('bookAddress').value.trim(),
+                preferredTime: document.getElementById('bookTime').value.trim(),
+                problem: document.getElementById('bookProblem').value.trim(),
+                fee: worker.fee,
+                status: 'অপেক্ষমাণ',
+                createdAt: 'এইমাত্র'
+            };
+
+            state.bookings.unshift(newBooking);
+            saveData();
+            updateBookingBadge();
+            closeWorkerModal();
+            showToast(`সফল! ${worker.name}-এর কাছে আপনার বুকিং অনুরোধ পাঠানো হয়েছে।`, 'success');
+        }
+
+        // Urgent Job Post Modal
+        function openJobPostModal() {
+            document.getElementById('jobPostModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeJobPostModal() {
+            document.getElementById('jobPostModal').classList.add('hidden');
+        }
+
+        function handleJobPostSubmit(e) {
+            e.preventDefault();
+            const newPost = {
+                id: 'j' + Date.now(),
+                title: document.getElementById('jobTitle').value.trim(),
+                category: document.getElementById('jobCategory').value,
+                area: document.getElementById('jobArea').value,
+                customerName: document.getElementById('jobCustomerName').value.trim(),
+                phone: document.getElementById('jobPhone').value.trim(),
+                desc: document.getElementById('jobDesc').value.trim(),
+                status: 'খোলা',
+                createdAt: 'এইমাত্র'
+            };
+
+            state.jobPosts.unshift(newPost);
+            saveData();
+            e.target.reset();
+            closeJobPostModal();
+            renderCustomerUrgentFeed();
+            showToast('আপনার জরুরি কাজের পোস্টটি প্রকাশ করা হয়েছে!', 'success');
+        }
+
+        // My Bookings Drawer
+        function openMyBookingsDrawer() {
+            renderMyBookings();
+            document.getElementById('myBookingsDrawer').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeMyBookingsDrawer() {
+            document.getElementById('myBookingsDrawer').classList.add('hidden');
+        }
+
+        function updateBookingBadge() {
+            document.getElementById('bookingCountBadge').textContent = toBanglaNumber(state.bookings.length);
+        }
+
+        function renderMyBookings() {
+            const list = document.getElementById('myBookingsList');
+            if (state.bookings.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-12">
+                        <p class="text-sm font-semibold text-slate-600">আপনি এখনো কোনো সেবা বুক করেননি।</p>
+                        <p class="text-xs text-slate-400 mt-1">পছন্দের কারিগর বেছে নিয়ে বুকিং অনুরোধ পাঠান।</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = state.bookings.map(b => `
+                <div class="p-4 rounded-2xl border border-slate-200 bg-white shadow-xs space-y-2">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-sm">${b.workerName}</h4>
+                            <p class="text-xs text-brand-700 font-medium">${b.workerCategory} • ৳ ${toBanglaNumber(b.fee || 300)}</p>
+                        </div>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-full ${getBookingStatusBadge(b.status)}">${b.status}</span>
+                    </div>
+                    <p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl">${b.problem}</p>
+                    <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
+                        <span>সময়: ${b.preferredTime}</span>
+                        <a href="tel:${b.workerPhone.replace(/[^0-9+]/g, '')}" class="text-brand-700 font-bold hover:underline flex items-center gap-1">
+                            <i data-lucide="phone" class="w-3 h-3"></i> কল করুন
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // ==================== MODE 2: WORKER MODE LOGIC ====================
+        function handleActiveWorkerChange(workerId) {
+            state.activeWorkerId = workerId;
+            renderWorkerDashboard();
+        }
+
+        function renderWorkerDashboard() {
+            const selector = document.getElementById('activeWorkerSelector');
+            selector.innerHTML = state.workers.map(w => {
+                const statusLabel = w.status === 'pending' ? ' [অনুমোদনের অপেক্ষায়]' : (w.status === 'suspended' ? ' [স্থগিত]' : '');
+                return `<option value="${w.id}" ${w.id === state.activeWorkerId ? 'selected' : ''}>${w.name} (${w.category} - ${w.area})${statusLabel}</option>`;
+            }).join('');
+
+            const activeWorker = state.workers.find(w => w.id === state.activeWorkerId) || state.workers[0];
+            if (!activeWorker) return;
+
+            // Control Box (Approval Status + Availability Toggle)
+            const controlBox = document.getElementById('selectedWorkerControlBox');
+            let approvalBadge = `<span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full">✓ অনুমোদিত কারিগর</span>`;
+            if (activeWorker.status === 'pending') {
+                approvalBadge = `<span class="text-xs font-bold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">⏳ অ্যাডমিন অনুমোদনের অপেক্ষায়</span>`;
+            } else if (activeWorker.status === 'suspended') {
+                approvalBadge = `<span class="text-xs font-bold bg-rose-100 text-rose-800 px-2.5 py-1 rounded-full">✕ অ্যাকাউন্ট স্থগিত</span>`;
+            }
+
+            controlBox.innerHTML = `
+                ${approvalBadge}
+                <button onclick="toggleWorkerAvailability('${activeWorker.id}')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition border flex items-center gap-1.5 ${
+                    activeWorker.available
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                    : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
+                }">
+                    <span class="w-2 h-2 rounded-full ${activeWorker.available ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
+                    <span>${activeWorker.available ? 'স্ট্যাটাস: সক্রিয় (কাজের জন্য প্রস্তুত)' : 'স্ট্যাটাস: ব্যস্ত'}</span>
+                </button>
+            `;
+
+            // Filter Bookings for Active Worker
+            const myBookings = state.bookings.filter(b => b.workerId === activeWorker.id);
+            document.getElementById('selectedWorkerReqLabel').textContent = activeWorker.name;
+
+            document.getElementById('statTotalRequests').textContent = toBanglaNumber(myBookings.length);
+            document.getElementById('statPendingRequests').textContent = toBanglaNumber(myBookings.filter(b => b.status === 'অপেক্ষমাণ').length);
+            document.getElementById('statAcceptedRequests').textContent = toBanglaNumber(myBookings.filter(b => b.status === 'চলমান').length);
+            document.getElementById('statCompletedRequests').textContent = toBanglaNumber(myBookings.filter(b => b.status === 'সম্পন্ন').length);
+
+            const reqList = document.getElementById('workerRequestsList');
+            if (myBookings.length === 0) {
+                reqList.innerHTML = `<p class="text-sm text-slate-500 py-6 text-center">এই কারিগরের জন্য এখনো কোনো সরাসরি বুকিং অনুরোধ আসেনি।</p>`;
+            } else {
+                reqList.innerHTML = myBookings.map(b => `
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2.5">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">গ্রাহক: ${b.customerName} (${b.customerPhone})</h4>
+                                <p class="text-xs text-slate-600 mt-0.5"><i data-lucide="map-pin" class="w-3 h-3 inline text-brand-700"></i> ${b.address} • সময়: ${b.preferredTime}</p>
+                            </div>
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${getBookingStatusBadge(b.status)}">${b.status}</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 bg-white p-2.5 rounded-lg border border-slate-200/70">${b.problem}</p>
+                        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                            <a href="tel:${b.customerPhone.replace(/[^0-9+]/g, '')}" class="text-xs font-bold text-slate-700 hover:text-brand-700 flex items-center gap-1">
+                                <i data-lucide="phone-call" class="w-3.5 h-3.5"></i> গ্রাহককে কল করুন
+                            </a>
+                            <div class="flex items-center gap-2">
+                                ${b.status === 'অপেক্ষমাণ' ? `
+                                    <button onclick="updateBookingStatus('${b.id}', 'চলমান')" class="px-3 py-1.5 rounded-lg bg-brand-700 hover:bg-brand-800 text-white text-xs font-bold transition">গ্রহণ করুন</button>
+                                    <button onclick="updateBookingStatus('${b.id}', 'বাতিল')" class="px-3 py-1.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold transition">বাতিল করুন</button>
+                                ` : ''}
+                                ${b.status === 'চলমান' ? `
+                                    <button onclick="updateBookingStatus('${b.id}', 'সম্পন্ন')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">সম্পন্ন করুন</button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Open Urgent Jobs List for Worker to Apply
+            const jobsList = document.getElementById('openJobsList');
+            const openJobs = state.jobPosts.filter(j => j.status !== 'বন্ধ');
+            if (openJobs.length === 0) {
+                jobsList.innerHTML = `<p class="text-sm text-slate-500 py-4 text-center">কোনো খোলা কাজের বিজ্ঞপ্তি নেই।</p>`;
+            } else {
+                jobsList.innerHTML = openJobs.map(job => `
+                    <div class="p-4 rounded-xl border border-amber-200/70 bg-amber-50/40 space-y-2">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="text-xs font-bold bg-accent-500/20 text-amber-900 px-2 py-0.5 rounded">${job.category}</span>
+                            <span class="text-xs font-medium text-slate-600">• ${job.area}</span>
+                            <span class="text-[11px] text-slate-400">• ${job.createdAt}</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">${job.title}</h4>
+                        <p class="text-xs text-slate-700">${job.desc}</p>
+                        <div class="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
+                            <span class="text-slate-600">পোস্টদাতা: <strong>${job.customerName}</strong></span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="applyToUrgentJob('${job.id}')" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3 py-1.5 rounded-lg transition">
+                                    আগ্রহ প্রকাশ করুন
+                                </button>
+                                <a href="tel:${job.phone.replace(/[^0-9+]/g, '')}" class="inline-flex items-center gap-1 bg-brand-700 hover:bg-brand-800 text-white font-semibold px-3 py-1.5 rounded-lg transition">
+                                    <i data-lucide="phone" class="w-3 h-3"></i> কল (${job.phone})
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            lucide.createIcons();
+        }
+
+        function applyToUrgentJob(jobId) {
+            const job = state.jobPosts.find(j => j.id === jobId);
+            const worker = state.workers.find(w => w.id === state.activeWorkerId);
+            if (!job || !worker) return;
+
+            if (worker.status !== 'approved') {
+                showToast('আবেদন করতে হলে আপনার প্রোফাইলটি আগে অ্যাডমিন কর্তৃক অনুমোদিত হতে হবে।', 'info');
+                return;
+            }
+            showToast(`"${job.title}" কাজের জন্য ${worker.name}-এর আবেদন গ্রাহককে জানানো হয়েছে!`, 'success');
+        }
+
+        function updateBookingStatus(bookingId, newStatus) {
+            const booking = state.bookings.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            booking.status = newStatus;
+            if (newStatus === 'সম্পন্ন') {
+                const worker = state.workers.find(w => w.id === booking.workerId);
+                if (worker) {
+                    worker.jobsCompleted = (worker.jobsCompleted || 0) + 1;
+                }
+            }
+
+            saveData();
+            if (state.role === 'worker') renderWorkerDashboard();
+            if (state.role === 'admin') renderAdminView();
+            showToast(`বুকিং স্ট্যাটাস "${newStatus}" হিসেবে আপডেট করা হয়েছে।`, 'success');
+        }
+
+        function toggleWorkerAvailability(workerId) {
+            const worker = state.workers.find(w => w.id === workerId);
+            if (!worker) return;
+            worker.available = !worker.available;
+            saveData();
+            renderWorkerDashboard();
+            showToast(`${worker.name}-এর স্ট্যাটাস এখন "${worker.available ? 'সক্রিয়' : 'ব্যস্ত'}"।`, 'info');
+        }
+
+        // New Worker Registration -> Starts as 'pending' for Admin Approval!
+        function handleWorkerRegister(e) {
+            e.preventDefault();
+            const newWorker = {
+                id: 'w' + Date.now(),
+                name: document.getElementById('regName').value.trim(),
+                category: document.getElementById('regCategory').value,
+                area: document.getElementById('regArea').value,
+                phone: document.getElementById('regPhone').value.trim(),
+                nid: document.getElementById('regNid').value.trim(),
+                fee: Number(document.getElementById('regFee').value) || 300,
+                experience: Number(document.getElementById('regExp').value) || 1,
+                rating: 5.0,
+                jobsCompleted: 0,
+                status: 'pending', // Requires Admin verification & approval
+                verified: false,
+                available: true,
+                bio: document.getElementById('regBio').value.trim(),
+                reviews: []
+            };
+
+            state.workers.unshift(newWorker);
+            state.activeWorkerId = newWorker.id;
+            saveData();
+            e.target.reset();
+            renderWorkerDashboard();
+            showToast(`আবেদন গৃহীত হয়েছে! অ্যাডমিন প্যানেল থেকে NID যাচাই ও অনুমোদনের পর আপনার প্রোফাইল গ্রাহকদের কাছে দৃশ্যমান হবে।`, 'success');
+        }
+
+        function scrollToRegisterForm() {
+            document.getElementById('registerWorkerSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ==================== MODE 3: ADMIN PANEL LOGIC ====================
+        function updateAdminBadges() {
+            const pendingCount = state.workers.filter(w => w.status === 'pending').length;
+            const navBadge = document.getElementById('adminPendingBadge');
+            const tabPill = document.getElementById('tabPendingPill');
+
+            if (pendingCount > 0) {
+                navBadge.textContent = toBanglaNumber(pendingCount);
+                navBadge.classList.remove('hidden');
+            } else {
+                navBadge.classList.add('hidden');
+            }
+
+            if (tabPill) {
+                tabPill.textContent = toBanglaNumber(pendingCount);
+            }
+        }
+
+        function handleAdminPinSubmit(e) {
+            e.preventDefault();
+            const now = Date.now();
+            const alertBox = document.getElementById('adminSecurityAlert');
+            const inputEl = document.getElementById('adminPinInput');
+
+            // Check if currently locked out due to 3 failed attempts
+            if (state.adminLockedUntil > now) {
+                const rem = Math.ceil((state.adminLockedUntil - now) / 1000);
+                showToast(`অতিরিক্ত ভুল চেষ্টার কারণে ${toBanglaNumber(rem)} সেকেন্ড অপেক্ষা করুন।`, 'error');
+                return;
+            }
+
+            const enteredPass = inputEl.value.trim();
+
+            if (enteredPass === ADMIN_SECRET_PASS) {
+                state.adminUnlocked = true;
+                state.adminFailedAttempts = 0;
+                state.adminLockedUntil = 0;
+                inputEl.value = '';
+                inputEl.type = 'password';
+                alertBox.classList.add('hidden');
+                if (lockoutTimerInterval) clearInterval(lockoutTimerInterval);
+                renderAdminView();
+                showToast('পাসওয়ার্ড যাচাই সফল! অ্যাডমিন প্যানেলে স্বাগতম।', 'success');
+            } else {
+                state.adminFailedAttempts += 1;
+                inputEl.value = '';
+                const remainingAttempts = MAX_ADMIN_ATTEMPTS - state.adminFailedAttempts;
+
+                if (remainingAttempts <= 0) {
+                    state.adminLockedUntil = Date.now() + (LOCKOUT_SECONDS * 1000);
+                    state.adminFailedAttempts = 0;
+                    startAdminLockoutCountdown();
+                    showToast('৩ বার ভুল পাসওয়ার্ড দেওয়ার কারণে প্যানেল সাময়িকভাবে লক করা হয়েছে!', 'error');
+                } else {
+                    alertBox.classList.remove('hidden');
+                    alertBox.textContent = `ভুল পাসওয়ার্ড! আপনার আর ${toBanglaNumber(remainingAttempts)} বার চেষ্টা করার সুযোগ আছে।`;
+                    showToast('ভুল পাসওয়ার্ড! প্রবেশাধিকার সংরক্ষিত।', 'error');
+                }
+            }
+        }
+
+        function startAdminLockoutCountdown() {
+            const alertBox = document.getElementById('adminSecurityAlert');
+            const inputEl = document.getElementById('adminPinInput');
+            const submitBtn = document.getElementById('adminUnlockBtn');
+
+            inputEl.disabled = true;
+            submitBtn.disabled = true;
+            alertBox.classList.remove('hidden');
+
+            if (lockoutTimerInterval) clearInterval(lockoutTimerInterval);
+
+            const updateCountdown = () => {
+                const rem = Math.ceil((state.adminLockedUntil - Date.now()) / 1000);
+                if (rem <= 0) {
+                    clearInterval(lockoutTimerInterval);
+                    state.adminLockedUntil = 0;
+                    inputEl.disabled = false;
+                    submitBtn.disabled = false;
+                    alertBox.classList.add('hidden');
+                } else {
+                    alertBox.textContent = `নিরাপত্তার স্বার্থে লগইন সাময়িকভাবে বন্ধ আছে। পুনরায় চেষ্টা করুন ${toBanglaNumber(rem)} সেকেন্ড পর।`;
+                }
+            };
+
+            updateCountdown();
+            lockoutTimerInterval = setInterval(updateCountdown, 1000);
+        }
+
+        function toggleAdminPasswordVisibility() {
+            const inputEl = document.getElementById('adminPinInput');
+            const eyeIcon = document.getElementById('adminEyeIcon');
+            if (inputEl.type === 'password') {
+                inputEl.type = 'text';
+                eyeIcon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                inputEl.type = 'password';
+                eyeIcon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
+        function lockAdminPanel() {
+            state.adminUnlocked = false;
+            const inputEl = document.getElementById('adminPinInput');
+            if (inputEl) {
+                inputEl.value = '';
+                inputEl.type = 'password';
+            }
+            renderAdminView();
+            showToast('অ্যাডমিন প্যানেল নিরাপদে লক করা হয়েছে।', 'info');
+        }
+
+        function renderAdminView() {
+            const lockScreen = document.getElementById('adminLockScreen');
+            const dashContent = document.getElementById('adminDashboardContent');
+
+            if (!state.adminUnlocked) {
+                lockScreen.classList.remove('hidden');
+                dashContent.classList.add('hidden');
+                lucide.createIcons();
+                return;
+            }
+
+            lockScreen.classList.add('hidden');
+            dashContent.classList.remove('hidden');
+
+            // Update 4 KPI Cards
+            const totalWorkers = state.workers.length;
+            const pendingWorkers = state.workers.filter(w => w.status === 'pending').length;
+            const totalBookings = state.bookings.length;
+            const completedBookings = state.bookings.filter(b => b.status === 'সম্পন্ন').length;
+
+            // Calculate total volume from non-cancelled bookings
+            const activeBookings = state.bookings.filter(b => b.status !== 'বাতিল');
+            const totalVolume = activeBookings.reduce((sum, b) => sum + (Number(b.fee) || 300), 0);
+            const commission = Math.round(totalVolume * 0.10);
+
+            document.getElementById('kpiTotalWorkers').textContent = `${toBanglaNumber(totalWorkers)} জন`;
+            document.getElementById('kpiPendingWorkers').textContent = `অনুমোদনের অপেক্ষায়: ${toBanglaNumber(pendingWorkers)} জন`;
+            document.getElementById('kpiTotalBookings').textContent = `${toBanglaNumber(totalBookings)} টি`;
+            document.getElementById('kpiCompletedBookings').textContent = `সম্পন্ন হয়েছে: ${toBanglaNumber(completedBookings)} টি`;
+            document.getElementById('kpiTotalVolume').textContent = `৳ ${toBanglaNumber(totalVolume)}`;
+            document.getElementById('kpiCommission').textContent = `প্ল্যাটফর্ম কমিশন (১০%): ৳ ${toBanglaNumber(commission)}`;
+            document.getElementById('kpiUrgentJobs').textContent = `${toBanglaNumber(state.jobPosts.length)} টি`;
+
+            switchAdminTab(state.adminTab);
+            lucide.createIcons();
+        }
+
+        function switchAdminTab(tab) {
+            state.adminTab = tab;
+            const tabs = ['workers', 'bookings', 'posts', 'system'];
+            const mapBtn = {
+                workers: 'adminTabBtnWorkers',
+                bookings: 'adminTabBtnBookings',
+                posts: 'adminTabBtnPosts',
+                system: 'adminTabBtnSystem'
+            };
+            const mapPanel = {
+                workers: 'adminTabWorkers',
+                bookings: 'adminTabBookings',
+                posts: 'adminTabPosts',
+                system: 'adminTabSystem'
+            };
+
+            tabs.forEach(t => {
+                const btn = document.getElementById(mapBtn[t]);
+                const panel = document.getElementById(mapPanel[t]);
+                if (t === tab) {
+                    btn.className = 'px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-2 bg-slate-900 text-white shadow-xs';
+                    panel.classList.remove('hidden');
+                } else {
+                    btn.className = 'px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition flex items-center gap-2 bg-white text-slate-700 border border-slate-200 hover:bg-slate-50';
+                    panel.classList.add('hidden');
+                }
+            });
+
+            if (tab === 'workers') renderAdminWorkers();
+            if (tab === 'bookings') renderAdminBookings();
+            if (tab === 'posts') renderAdminPostsAndMeta();
+            lucide.createIcons();
+        }
+
+        // Tab A: Worker Management & Verification
+        function setAdminWorkerFilter(filter) {
+            state.adminWorkerFilter = filter;
+            ['all', 'pending', 'approved', 'suspended'].forEach(f => {
+                const btn = document.getElementById('awf-' + f);
+                if (f === filter) {
+                    btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-brand-700 text-white transition';
+                } else {
+                    btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
+                }
+            });
+            renderAdminWorkers();
+        }
+
+        function renderAdminWorkers() {
+            const container = document.getElementById('adminWorkersList');
+            const filtered = state.workers.filter(w => {
+                if (state.adminWorkerFilter === 'all') return true;
+                return w.status === state.adminWorkerFilter;
+            });
+
+            document.getElementById('adminWorkerFilterCount').textContent = `দেখানো হচ্ছে: ${toBanglaNumber(filtered.length)} জন কারিগর`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full bg-white p-10 rounded-2xl border border-slate-200 text-center text-sm text-slate-500">এই ফিল্টারে কোনো কারিগর পাওয়া যায়নি।</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(w => {
+                let statusBadge = `<span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">✓ অনুমোদিত</span>`;
+                if (w.status === 'pending') {
+                    statusBadge = `<span class="text-xs font-bold bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full">⏳ অনুমোদনের অপেক্ষায়</span>`;
+                } else if (w.status === 'suspended') {
+                    statusBadge = `<span class="text-xs font-bold bg-rose-100 text-rose-800 px-2.5 py-0.5 rounded-full">✕ স্থগিত / ব্লকড</span>`;
+                }
+
+                return `
+                    <div class="bg-white rounded-2xl border ${w.status === 'pending' ? 'border-amber-300 ring-1 ring-amber-200' : 'border-slate-200'} shadow-sm p-5 flex flex-col justify-between gap-4">
+                        <div class="space-y-2.5">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-base">${w.name}</h4>
+                                    <p class="text-xs font-semibold text-brand-700">${w.category} • এলাকা: ${w.area}</p>
+                                </div>
+                                ${statusBadge}
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
+                                <div>
+                                    <span class="text-slate-400 block">মোবাইল নম্বর</span>
+                                    <strong class="text-slate-800">${w.phone}</strong>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block">NID নম্বর</span>
+                                    <strong class="text-slate-800 font-mono">${w.nid || 'প্রদান করা হয়নি'}</strong>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block">ভিজিট ফি</span>
+                                    <strong class="text-slate-800">৳ ${toBanglaNumber(w.fee)}</strong>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block">অভিজ্ঞতা ও কাজ</span>
+                                    <strong class="text-slate-800">${toBanglaNumber(w.experience)} বছর (${toBanglaNumber(w.jobsCompleted)} কাজ)</strong>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-600">${w.bio}</p>
+                        </div>
+
+                        <!-- Admin Action Buttons -->
+                        <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                                ${w.status === 'pending' ? `
+                                    <button onclick="adminUpdateWorkerStatus('${w.id}', 'approved')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+                                        <i data-lucide="badge-check" class="w-4 h-4"></i>
+                                        অনুমোদন ও NID ভেরিফাই করুন
+                                    </button>
+                                ` : ''}
+                                ${w.status === 'approved' ? `
+                                    <button onclick="adminUpdateWorkerStatus('${w.id}', 'suspended')" class="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold transition">
+                                        স্থগিত করুন
+                                    </button>
+                                ` : ''}
+                                ${w.status === 'suspended' ? `
+                                    <button onclick="adminUpdateWorkerStatus('${w.id}', 'approved')" class="px-3 py-1.5 rounded-xl bg-brand-700 hover:bg-brand-800 text-white text-xs font-bold transition">
+                                        পুনরায় সক্রিয় করুন
+                                    </button>
+                                ` : ''}
+                            </div>
+
+                            <button onclick="adminDeleteWorker('${w.id}')" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition flex items-center gap-1">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                মুছে ফেলুন
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function adminUpdateWorkerStatus(workerId, newStatus) {
+            const worker = state.workers.find(w => w.id === workerId);
+            if (!worker) return;
+
+            worker.status = newStatus;
+            if (newStatus === 'approved') {
+                worker.verified = true;
+            }
+            saveData();
+            renderAdminView();
+            const msg = newStatus === 'approved'
+                ? `${worker.name}-কে অনুমোদন ও NID ভেরিফাই করা হয়েছে!`
+                : `${worker.name}-এর অ্যাকাউন্ট স্থগিত করা হয়েছে।`;
+            showToast(msg, 'success');
+        }
+
+        function adminDeleteWorker(workerId) {
+            const worker = state.workers.find(w => w.id === workerId);
+            if (!worker) return;
+            state.workers = state.workers.filter(w => w.id !== workerId);
+            saveData();
+            renderAdminView();
+            showToast(`${worker.name}-এর প্রোফাইল মুছে ফেলা হয়েছে।`, 'info');
+        }
+
+        // Tab B: All Bookings Monitor
+        function renderAdminBookings() {
+            const container = document.getElementById('adminBookingsList');
+            if (state.bookings.length === 0) {
+                container.innerHTML = `<p class="text-sm text-slate-500 py-8 text-center">সিস্টেমে এখনো কোনো বুকিং নেই।</p>`;
+                return;
+            }
+
+            container.innerHTML = state.bookings.map(b => `
+                <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${getBookingStatusBadge(b.status)}">${b.status}</span>
+                            <span class="text-xs font-semibold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">${b.workerCategory}</span>
+                            <span class="text-xs text-slate-500">• ${b.createdAt}</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">
+                            গ্রাহক: ${b.customerName} (${b.customerPhone}) <span class="text-slate-400 font-normal">→</span> কারিগর: <span class="text-brand-800">${b.workerName}</span>
+                        </h4>
+                        <p class="text-xs text-slate-600"><i data-lucide="map-pin" class="w-3 h-3 inline text-brand-700"></i> ${b.address} • সময়: ${b.preferredTime} • ফি: <strong>৳ ${toBanglaNumber(b.fee || 300)}</strong></p>
+                        <p class="text-xs text-slate-700 bg-white p-2 rounded-lg border border-slate-200/70 mt-1">${b.problem}</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2 shrink-0">
+                        ${b.status !== 'সম্পন্ন' ? `
+                            <button onclick="updateBookingStatus('${b.id}', 'সম্পন্ন')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">মার্ক সম্পন্ন</button>
+                        ` : ''}
+                        ${b.status !== 'বাতিল' ? `
+                            <button onclick="updateBookingStatus('${b.id}', 'বাতিল')" class="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold transition">বাতিল</button>
+                        ` : ''}
+                        <button onclick="adminDeleteBooking('${b.id}')" class="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 transition" title="বুকিং মুছুন">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function adminDeleteBooking(bookingId) {
+            state.bookings = state.bookings.filter(b => b.id !== bookingId);
+            saveData();
+            updateBookingBadge();
+            renderAdminView();
+            showToast('বুকিং রেকর্ডটি মুছে ফেলা হয়েছে।', 'info');
+        }
+
+        // Tab C: Urgent Posts Moderation & Dynamic Areas/Categories
+        function renderAdminPostsAndMeta() {
+            // Urgent Posts
+            const postsContainer = document.getElementById('adminUrgentJobsList');
+            if (state.jobPosts.length === 0) {
+                postsContainer.innerHTML = `<p class="text-sm text-slate-500 py-6 text-center">কোনো জরুরি কাজের পোস্ট নেই।</p>`;
+            } else {
+                postsContainer.innerHTML = state.jobPosts.map(job => `
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-xs font-bold bg-brand-100 text-brand-800 px-2 py-0.5 rounded">${job.category}</span>
+                                    <span class="text-xs text-slate-600">• ${job.area}</span>
+                                    <span class="text-xs font-bold ${job.status === 'বন্ধ' ? 'text-rose-600' : 'text-emerald-600'}">• [${job.status || 'খোলা'}]</span>
+                                </div>
+                                <h4 class="font-bold text-slate-900 text-sm mt-1">${job.title}</h4>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button onclick="toggleJobPostStatus('${job.id}')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-bold text-slate-700">
+                                    ${job.status === 'বন্ধ' ? 'চালু করুন' : 'বন্ধ করুন'}
+                                </button>
+                                <button onclick="adminDeleteJobPost('${job.id}')" class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600">${job.desc}</p>
+                        <p class="text-xs text-slate-500">পোস্টদাতা: ${job.customerName} (${job.phone})</p>
+                    </div>
+                `).join('');
+            }
+
+            // Areas Tags
+            document.getElementById('adminAreasTags').innerHTML = state.areas.map(a => `
+                <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg border border-slate-200">
+                    ${a}
+                </span>
+            `).join('');
+
+            // Categories Tags
+            document.getElementById('adminCategoriesTags').innerHTML = state.categories.map(c => `
+                <span class="inline-flex items-center gap-1 bg-brand-50 text-brand-800 text-xs font-semibold px-2.5 py-1 rounded-lg border border-brand-200">
+                    ${c.label}
+                </span>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        function handleAddArea(e) {
+            e.preventDefault();
+            const val = document.getElementById('newAreaInput').value.trim();
+            if (!val) return;
+            if (state.areas.includes(val)) {
+                showToast('এই এলাকাটি ইতিমধ্যেই তালিকায় রয়েছে।', 'info');
+                return;
+            }
+            state.areas.push(val);
+            saveData();
+            syncAllDropdowns();
+            document.getElementById('newAreaInput').value = '';
+            renderAdminPostsAndMeta();
+            showToast(`নতুন এলাকা "${val}" সফলভাবে যোগ করা হয়েছে!`, 'success');
+        }
+
+        function handleAddCategory(e) {
+            e.preventDefault();
+            const val = document.getElementById('newCategoryInput').value.trim();
+            if (!val) return;
+            if (state.categories.some(c => c.id === val)) {
+                showToast('এই ক্যাটাগরিটি ইতিমধ্যেই তালিকায় রয়েছে।', 'info');
+                return;
+            }
+            state.categories.push({ id: val, label: val, icon: 'wrench' });
+            saveData();
+            syncAllDropdowns();
+            document.getElementById('newCategoryInput').value = '';
+            renderAdminPostsAndMeta();
+            showToast(`নতুন ক্যাটাগরি "${val}" সফলভাবে যোগ করা হয়েছে!`, 'success');
+        }
+
+        function toggleJobPostStatus(jobId) {
+            const job = state.jobPosts.find(j => j.id === jobId);
+            if (!job) return;
+            job.status = job.status === 'বন্ধ' ? 'খোলা' : 'বন্ধ';
+            saveData();
+            renderAdminPostsAndMeta();
+            showToast(`পোস্টের স্ট্যাটাস "${job.status}" করা হয়েছে।`, 'info');
+        }
+
+        function adminDeleteJobPost(jobId) {
+            state.jobPosts = state.jobPosts.filter(j => j.id !== jobId);
+            saveData();
+            renderAdminView();
+            showToast('জরুরি কাজের পোস্টটি মুছে ফেলা হয়েছে।', 'info');
+        }
+
+        // Tab D: System Export & Reset
+        function exportSystemData() {
+            const payload = {
+                app: 'হাতের কাছে (Hater Kache)',
+                exportedAt: new Date().toISOString(),
+                areas: state.areas,
+                categories: state.categories,
+                workers: state.workers,
+                bookings: state.bookings,
+                jobPosts: state.jobPosts
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `hater_kache_backup_${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('সিস্টেম ব্যাকআপ JSON ফাইল ডাউনলোড শুরু হয়েছে।', 'success');
+        }
+
+        function resetDemoData() {
+            localStorage.removeItem(STORAGE_KEY);
+            state.selectedLocation = 'সকল এলাকা';
+            state.selectedCategory = 'সব ক্যাটাগরি';
+            loadDefaults();
+            state.activeWorkerId = state.workers[0].id;
+            syncAllDropdowns();
+            updateBookingBadge();
+            renderCategoryChips();
+            renderWorkers();
+            renderCustomerUrgentFeed();
+            if (state.role === 'worker') renderWorkerDashboard();
+            if (state.role === 'admin') renderAdminView();
+            showToast('সব ডেমো ডেটা পুনরায় প্রাথমিক অবস্থায় রিসেট করা হয়েছে।', 'info');
+        }
+
+        // Helpers
+        function getBookingStatusBadge(status) {
+            if (status === 'চলমান') return 'bg-blue-100 text-blue-800';
+            if (status === 'সম্পন্ন') return 'bg-emerald-100 text-emerald-800';
+            if (status === 'বাতিল') return 'bg-rose-100 text-rose-800';
+            return 'bg-amber-100 text-amber-800';
+        }
+
+        function toBanglaNumber(num) {
+            const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return String(num).replace(/\d/g, d => banglaDigits[d]);
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            let borderClass = 'border-brand-500';
+            let iconName = 'check-circle';
+            if (type === 'info') { borderClass = 'border-accent-400'; iconName = 'info'; }
+            if (type === 'error') { borderClass = 'border-rose-500'; iconName = 'alert-circle'; }
+
+            toast.className = `bg-slate-900 ${borderClass} text-white px-4 py-3 rounded-xl shadow-xl border-l-4 flex items-center gap-2.5 text-xs sm:text-sm font-medium animate-slide-up pointer-events-auto`;
+            toast.innerHTML = `
+                <i data-lucide="${iconName}" class="w-4 h-4 text-accent-400 shrink-0"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
